@@ -3,4 +3,9 @@
   border: 2px solid grey;
   border-radius: 20px;
   padding: 20px;
+
+  display: grid;
+  grid-template-columns: 50% 45% 5%;
+  grid-template-areas: "title date checkbox";
+  align-items: center;
 }
