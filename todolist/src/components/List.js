@@ -4,8 +4,12 @@ import { v4 as uuidv4 } from "uuid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addTask, readData, deleteTask } from "../database";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase";
+import { signOut } from "firebase/auth";
 
 function List() {
+  const [user] = useAuthState(auth);
   let [title, setTitle] = useState("");
   let [date, setDate] = useState(new Date());
   let [todo, setTodo] = useState([]);
@@ -30,10 +34,20 @@ function List() {
     readData().then((tasks) => {
       setTodo(tasks);
     });
-  }, [])
+  }, []);
 
   return (
     <div>
+      <marquee>
+        Signed in: {user.displayName}, {user.email}
+      </marquee>
+      <button
+        onClick={() => {
+          signOut(auth);
+        }}
+      >
+        Sign Out
+      </button>
       <h1>Todo List</h1>
       <div className="inputs">
         <input
@@ -46,8 +60,7 @@ function List() {
         {todo.map((data) => {
           console.log(data);
           return <Item key={data.id} itemData={data} removeItem={removeItem} />;
-        }
-        )}
+        })}
       </div>
     </div>
   );
