@@ -30,8 +30,8 @@ const readData = async () => {
   return await dataArr;
 };
 
-const deleteTask = async (taskName) => {
-  await deleteDoc(doc(database, "tasks", taskName))
+const deleteTask = async (task) => {
+  await deleteDoc(doc(database, "tasks", task.id))
     .then(() => {
       return;
     })

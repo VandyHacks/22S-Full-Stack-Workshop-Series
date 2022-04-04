@@ -13,6 +13,7 @@ function List() {
   function removeItem(data) {
     const result = todo.filter((item) => item.id !== data.id);
     setTodo(result);
+    deleteTask(data);
   }
 
   function onSubmit() {
