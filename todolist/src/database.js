@@ -9,30 +9,9 @@ import {
 
 const addTask = (item) => {
   try {
-    setDoc(doc(database, "tasks", item.title), item);
+    setDoc(doc(database, "tasks", item.id), item);
   } catch (e) {
     console.error("Error adding document: ", e);
-  }
-};
-
-const priorityToNum = (prio) => {
-  if (prio === "High") {
-    console.log(3);
-    return 3;
-  } else if (prio === "Medium") {
-    return 2;
-  } else if (prio === "Low") {
-    return 1;
-  } else {
-    return 0;
-  }
-};
-
-const sortFun = (a, b) => {
-  if (b.due.toDateString() === a.due.toDateString()) {
-    return priorityToNum(b.priority) - priorityToNum(a.priority);
-  } else {
-    return a.due - b.due;
   }
 };
 
@@ -40,18 +19,18 @@ const readData = async () => {
   const arr = await getDocs(collection(database, "tasks"));
   let dataArr = [];
   arr.forEach((doc) => {
+    console.log(doc.data().date);
     const object = {
       title: doc.data().title,
-      priority: doc.data().priority,
-      due: new Date(doc.data().due.seconds * 1000),
-      done: doc.data().done,
+      date: new Date(doc.data().date.seconds * 1000),
+      id: doc.data().id,
     };
     dataArr.push(object);
   });
-  return await dataArr.slice().sort(sortFun);
+  return await dataArr;
 };
 
-const deleteItem = async (taskName) => {
+const deleteTask = async (taskName) => {
   await deleteDoc(doc(database, "tasks", taskName))
     .then(() => {
       return;
@@ -61,4 +40,4 @@ const deleteItem = async (taskName) => {
     });
 };
 
-export { addTask, readData, deleteItem };
+export { addTask, readData, deleteTask };

@@ -1,25 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Item from "./Item";
 import { v4 as uuidv4 } from "uuid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { addTask, readData, deleteTask } from "../database";
 
 function List() {
   let [title, setTitle] = useState("");
-  let taskList = [
-    {
-      title: "task1",
-      date: new Date(),
-      id: uuidv4(),
-    },
-    {
-      title: "task2",
-      date: new Date(),
-      id: uuidv4(),
-    },
-  ];
-  let [todo, setTodo] = useState(taskList);
   let [date, setDate] = useState(new Date());
+  let [todo, setTodo] = useState([]);
 
   function removeItem(data) {
     const result = todo.filter((item) => item.id !== data.id);
@@ -27,10 +16,20 @@ function List() {
   }
 
   function onSubmit() {
-    setTodo([...todo, { title: title, date: date, id: uuidv4() }]);
+    console.log(todo);
+    const newObj = { title: title, date: date, id: uuidv4() };
+    addTask(newObj);
+    setTodo([...todo, newObj]);
     setTitle("");
     setDate(new Date());
   }
+
+  useEffect(() => {
+    console.log(readData());
+    readData().then((tasks) => {
+      setTodo(tasks);
+    });
+  }, [])
 
   return (
     <div>
@@ -43,9 +42,11 @@ function List() {
         />
         <DatePicker selected={date} onChange={setDate} />
         <input type="button" value="Add" onClick={onSubmit} />
-        {todo.map((data) => (
-          <Item key={data.id} itemData={data} removeItem={removeItem} />
-        ))}
+        {todo.map((data) => {
+          console.log(data);
+          return <Item key={data.id} itemData={data} removeItem={removeItem} />;
+        }
+        )}
       </div>
     </div>
   );
