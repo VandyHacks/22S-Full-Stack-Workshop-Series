@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -15,6 +16,5 @@ const firebaseConfig = {
 console.log(process.env.API_KEY);
 
 const app = initializeApp(firebaseConfig);
-const database = getFirestore(app);
-
-export default database;
+export const auth = getAuth(app);
+export const database = getFirestore(app);
