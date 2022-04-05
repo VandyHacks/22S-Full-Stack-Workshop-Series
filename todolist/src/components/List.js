@@ -3,7 +3,14 @@ import Item from "./Item";
 import { v4 as uuidv4 } from "uuid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { addTask, readData, deleteTask } from "../database";
+import database from "../firebase";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 
 function List() {
   let [title, setTitle] = useState("");
@@ -13,23 +20,29 @@ function List() {
   function removeItem(data) {
     const result = todo.filter((item) => item.id !== data.id);
     setTodo(result);
-    deleteTask(data);
+    deleteDoc(doc(database, "tasks", data.id));
   }
 
   function onSubmit() {
     console.log(todo);
     const newObj = { title: title, date: date, id: uuidv4() };
-    addTask(newObj);
+    setDoc(doc(database, "tasks", newObj.id), newObj);
     setTodo([...todo, newObj]);
     setTitle("");
     setDate(new Date());
   }
 
   useEffect(() => {
-    console.log(readData());
-    readData().then((tasks) => {
-      setTodo(tasks);
-    });
+    getDocs(collection(database, "tasks")).then((tasks) => {
+      console.log(tasks);
+      let newArr = [];
+      tasks.forEach((task) => newArr.push({
+        title: task.data().title,
+        date: new Date(task.data().date.seconds * 1000),
+        id: task.data().id,
+      }));
+      setTodo(newArr);
+    })
   }, [])
 
   return (
