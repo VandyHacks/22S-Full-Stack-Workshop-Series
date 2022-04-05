@@ -55,7 +55,7 @@ function List() {
   return (
     <div>
       <marquee>
-        Signed in: {user.displayName}, {user.email}
+        Signed in: { user.displayName }, { user.email }
       </marquee>
       <button
         onClick={() => {
