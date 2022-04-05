@@ -17,23 +17,25 @@ function List() {
   let [date, setDate] = useState(new Date());
   let [todo, setTodo] = useState([]);
 
+  const collectionName = "tasks";
+
   function removeItem(data) {
     const result = todo.filter((item) => item.id !== data.id);
     setTodo(result);
-    deleteDoc(doc(database, "tasks", data.id));
+    deleteDoc(doc(database, collectionName, data.id));
   }
 
   function onSubmit() {
     console.log(todo);
     const newObj = { title: title, date: date, id: uuidv4() };
-    setDoc(doc(database, "tasks", newObj.id), newObj);
+    setDoc(doc(database, collectionName, newObj.id), newObj);
     setTodo([...todo, newObj]);
     setTitle("");
     setDate(new Date());
   }
 
   useEffect(() => {
-    getDocs(collection(database, "tasks")).then((tasks) => {
+    getDocs(collection(database, collectionName)).then((tasks) => {
       console.log(tasks);
       let newArr = [];
       tasks.forEach((task) => newArr.push({
