@@ -3,7 +3,7 @@ import Item from "./Item";
 import { v4 as uuidv4 } from "uuid";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import database from "../firebase";
+import {database} from "../firebase";
 import {
   collection,
   doc,
@@ -20,8 +20,9 @@ function List() {
   let [title, setTitle] = useState("");
   let [date, setDate] = useState(new Date());
   let [todo, setTodo] = useState([]);
+  console.log(user);
 
-  const collectionName = "tasks";
+  const collectionName = `users/${user.uid}/tasks`;
 
   function removeItem(data) {
     const result = todo.filter((item) => item.id !== data.id);
