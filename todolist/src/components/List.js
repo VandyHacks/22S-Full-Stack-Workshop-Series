@@ -43,20 +43,27 @@ function List() {
   }
 
   async function saveCalLink() {
+    console.log(calLink);
     await setDoc(doc(database, "users", user.uid), {
       calendaruri: calLink,
     });
+    setOpenModal(false);
+  }
+
+  async function syncCalendar() {
     const brightSpaceArr = await fetch(
       "https://us-central1-automation-nk.cloudfunctions.net/ical?url=" + calLink
     ).then((res) => res.json());
     brightSpaceArr.forEach((task) => {
-      const newObj = {
-        title: task.name,
-        date: new Date(task.time),
-        id: uuidv4(),
-      };
-      setDoc(doc(database, collectionName, newObj.id), newObj);
-      setTodo([...todo, newObj]);
+      if (!todo.filter((item) => item.title === task.name).length) {
+        const newObj = {
+          title: task.name,
+          date: new Date(task.time),
+          id: uuidv4(),
+        };
+        setDoc(doc(database, collectionName, newObj.id), newObj);
+        setTodo([...todo, newObj]);
+      }
     });
     setOpenModal(false);
   }
@@ -102,8 +109,14 @@ function List() {
         <input type="button" value="Add" onClick={onSubmit} />
         <input
           type="button"
-          value="Sync with Brightspace"
+          value="Set Calendar Link"
           onClick={() => setOpenModal(true)}
+        />
+        <input
+          type="button"
+          value="Sync with Brightspace"
+          onClick={syncCalendar}
+          disabled={!calLink}
         />
         {todo.map((data) => (
           <Item key={data.id} itemData={data} removeItem={removeItem} />
