@@ -54,6 +54,7 @@ function List() {
     const brightSpaceArr = await fetch(
       "https://us-central1-automation-nk.cloudfunctions.net/ical?url=" + calLink
     ).then((res) => res.json());
+    let updatedArr = todo;
     brightSpaceArr.forEach((task) => {
       if (!todo.filter((item) => item.title === task.name).length) {
         const newObj = {
@@ -62,9 +63,10 @@ function List() {
           id: uuidv4(),
         };
         setDoc(doc(database, collectionName, newObj.id), newObj);
-        setTodo([...todo, newObj]);
+        updatedArr.push(newObj);
       }
     });
+    setTodo([...updatedArr]);
     setOpenModal(false);
   }
 
@@ -103,7 +105,7 @@ function List() {
         <input
           type="text"
           value={title}
-          onChange={(event) => setCalLink(event.target.value)}
+          onChange={(event) => setTitle(event.target.value)}
         />
         <DatePicker selected={date} onChange={setDate} />
         <input type="button" value="Add" onClick={onSubmit} />
